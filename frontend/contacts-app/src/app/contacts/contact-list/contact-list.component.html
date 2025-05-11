@@ -1,0 +1,101 @@
+<div class="container mt-4">
+  <h2>Lista de Contactos</h2>
+  <button class="btn btn-primary mb-3" (click)="openCreateModal()">Crear Contacto</button>
+
+  <!-- Spinner mientras se cargan los contactos -->
+  <div *ngIf="isLoading" class="text-center my-5">
+    <div class="spinner-border text-primary" style="width: 4rem; height: 4rem;" role="status">
+      <span class="visually-hidden">Cargando...</span>
+    </div>
+  </div>
+  <div *ngIf="errorMsg" class="alert alert-danger text-center my-3 fs-4">
+    {{ errorMsg }}
+  </div>
+  <div *ngIf="!isLoading && contacts.length === 0" class="alert alert-warning text-center display-4 my-5">
+    No hay contactos registrados.
+  </div>
+  <table *ngIf="!isLoading && contacts.length > 0" class="table table-striped">
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Email</th>
+        <th>Teléfono</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let contact of contacts">
+        <td>{{ contact.name }}</td>
+        <td>{{ contact.email }}</td>
+        <td>{{ contact.phone }}</td>
+        <td>
+          <button class="btn btn-info btn-sm me-2" (click)="openViewModal(contact._id!)" title="Ver">
+            <i class="bi bi-eye"></i>
+          </button>
+          <button class="btn btn-danger btn-sm" (click)="deleteContact(contact._id!)" title="Eliminar">
+            <i class="bi bi-trash"></i>
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Modal para Crear Contacto -->
+  <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="createModalLabel">Crear Contacto</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form #createForm="ngForm" (ngSubmit)="createContact()">
+            <div class="mb-3">
+              <label for="name" class="form-label">Nombre</label>
+              <input type="text" class="form-control" id="name" [(ngModel)]="newContact.name" name="name" required #name="ngModel" pattern=".*\S.*">
+              <div *ngIf="name.invalid && (name.dirty || name.touched)" class="text-danger small">
+                <div *ngIf="name.errors?.['required']">El nombre es obligatorio.</div>
+                <div *ngIf="name.errors?.['pattern']">El nombre no puede estar vacío.</div>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="email" class="form-label">Email</label>
+              <input type="email" class="form-control" id="email" [(ngModel)]="newContact.email" name="email" required #email="ngModel" email>
+              <div *ngIf="email.invalid && (email.dirty || email.touched)" class="text-danger small">
+                <div *ngIf="email.errors?.['required']">El email es obligatorio.</div>
+                <div *ngIf="email.errors?.['email']">Debe ser un email válido.</div>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="phone" class="form-label">Teléfono</label>
+              <input type="text" class="form-control" id="phone" [(ngModel)]="newContact.phone" name="phone" required #phone="ngModel" pattern="^\+?[\d\-()]*\d[\d\-()]*$">
+              <div *ngIf="phone.invalid && (phone.dirty || phone.touched)" class="text-danger small">
+                <div *ngIf="phone.errors?.['required']">El teléfono es obligatorio.</div>
+                <div *ngIf="phone.errors?.['pattern']">El teléfono solo puede contener un + inicial, dígitos, guiones y paréntesis.</div>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary" [disabled]="!createForm.valid">Guardar</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para Ver Detalle de Contacto -->
+  <div class="modal fade" id="viewModal" tabindex="-1" aria-labelledby="viewModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="viewModalLabel">Detalles del Contacto</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p><strong>ID:</strong> {{ selectedContact?._id }}</p>
+          <p><strong>Nombre:</strong> {{ selectedContact?.name }}</p>
+          <p><strong>Email:</strong> {{ selectedContact?.email }}</p>
+          <p><strong>Teléfono:</strong> {{ selectedContact?.phone }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
