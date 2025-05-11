@@ -37,3 +37,7 @@ Luego, ejecutar el siguiente comando en consola estando dentro del directorio _f
 ```bash
 $ npm start
 ```
+
+## Notas
+
+Si tiene problemas de conexión con la base de datos al momento de iniciar el backend, verificar los DNS de su red (se recomienda usar los de Google).
